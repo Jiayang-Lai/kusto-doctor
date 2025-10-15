@@ -1,0 +1,13 @@
+{
+    "displayName": "Defender detection without table data",
+    "isEnabled": true,
+    "queryCondition": {
+      "queryText": "DeviceNetworkEvents | where Timestamp > ago(1h)"
+    },
+    "schedule": {
+      "period": "1H"
+    },
+    "detectionAction": {
+      "truncated": "True"
+    }
+}

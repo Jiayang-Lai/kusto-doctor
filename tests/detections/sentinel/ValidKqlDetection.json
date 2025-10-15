@@ -1,0 +1,23 @@
+{
+    "kind": "Scheduled",
+    "properties": {
+        "displayName": "Detection which is valid KQL",
+        "description": "A demo rule which easily survives KQL validation",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "AuditLogs | where TimeGenerated between (ago(7d) .. now()) | where Identity == \"MS-PIM\" | summarize count() by OperationName",
+        "queryFrequency": "PT1H",
+        "queryPeriod": "PT5H",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "startTimeUtc": null,
+        "tactics": [
+            "InitialAccess"
+        ],
+        "techniques": [
+            "T1078"
+        ]
+    }
+}

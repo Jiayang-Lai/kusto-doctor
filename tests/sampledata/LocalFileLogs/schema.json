@@ -1,0 +1,10 @@
+[
+  {
+    "ColumnName": "name",
+    "ColumnType": "string"
+  },
+  {
+    "ColumnName": "age",
+    "ColumnType": "int"
+  }
+]

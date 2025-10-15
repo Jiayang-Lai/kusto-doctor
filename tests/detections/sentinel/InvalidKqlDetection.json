@@ -1,0 +1,23 @@
+{
+    "kind": "Scheduled",
+    "properties": {
+        "displayName": "Detection with a KQL error",
+        "description": "A demo rule which shouldn't survive KQL validation",
+        "severity": "Medium",
+        "enabled": true,
+        "query": "AuditLogs | mv-expand(Id)",
+        "queryFrequency": "PT1H",
+        "queryPeriod": "PT5H",
+        "triggerOperator": "GreaterThan",
+        "triggerThreshold": 0,
+        "suppressionDuration": "PT5H",
+        "suppressionEnabled": false,
+        "startTimeUtc": null,
+        "tactics": [
+            "InitialAccess"
+        ],
+        "techniques": [
+            "T1078"
+        ]
+    }
+}

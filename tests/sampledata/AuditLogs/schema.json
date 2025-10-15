@@ -1,0 +1,130 @@
+[
+    {
+        "ColumnName":  "TenantId",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "SourceSystem",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "TimeGenerated",
+        "ColumnType":  "datetime"
+    },
+    {
+        "ColumnName":  "ResourceId",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "OperationName",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "OperationVersion",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Category",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ResultType",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ResultSignature",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ResultDescription",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "DurationMs",
+        "ColumnType":  "long"
+    },
+    {
+        "ColumnName":  "CorrelationId",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Resource",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ResourceGroup",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ResourceProvider",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Identity",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Level",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Location",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "AdditionalDetails",
+        "ColumnType":  "dynamic"
+    },
+    {
+        "ColumnName":  "Id",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "InitiatedBy",
+        "ColumnType":  "dynamic"
+    },
+    {
+        "ColumnName":  "LoggedByService",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Result",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ResultReason",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "TargetResources",
+        "ColumnType":  "dynamic"
+    },
+    {
+        "ColumnName":  "AADTenantId",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ActivityDisplayName",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "ActivityDateTime",
+        "ColumnType":  "datetime"
+    },
+    {
+        "ColumnName":  "AADOperationType",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "Type",
+        "ColumnType":  "string"
+    },
+    {
+        "ColumnName":  "_BilledSize",
+        "ColumnType":  "real"
+    },
+    {
+        "ColumnName":  "_IsBillable",
+        "ColumnType":  "string"
+    }
+]

@@ -1,0 +1,19 @@
+[
+  {
+    "ColumnName": "Gender",
+    "ColumnType": "string"
+  },
+  {
+    "ColumnName": "Name",
+    "ColumnType": "int"
+  },
+  {
+    "ColumnName": "Weight",
+    "ColumnType": "int"
+  },
+  {
+    "ColumnName": "Index",
+    "ColumnType": "int"
+  }
+
+]

@@ -1,0 +1,79 @@
+[project]
+name = "Kusto-Doctor"
+version = "0.0.1"
+description = "A project for validating Kusto queries using data explorer backend like Kustainer."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+keywords = ["kusto", "kql", "azure", "query-validation"]
+dependencies = [
+  "azure-kusto-data>=5.0.5",
+  "azure-kusto-ingest>=5.0.5",
+  "pandas>=2.0.5",
+]
+authors = [
+  { name = "Jiayang Lai", email = "jiayang.lai@icloud.com" }
+]
+maintainers = [
+  { name = "Jiayang Lai", email = "jiayang.lai@icloud.com" }
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing",
+    "Typing :: Typed",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Jiayang-Lai/kusto-doctor"
+"Bug Tracker" = "https://github.com/Jiayang-Lai/kusto-doctor/issues"
+"Documentation" = "https://github.com/Jiayang-Lai/kusto-doctor#readme"
+"Source Code" = "https://github.com/Jiayang-Lai/kusto-doctor"
+"Changelog" = "https://github.com/Jiayang-Lai/kusto-doctor/blob/main/CHANGELOG.md"
+
+
+[build-system]
+requires = ["hatchling>=1.17.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = [
+  "src/kusto_doctor"
+]
+
+[tool.hatch.envs.default]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+
+[tool.hatch.envs.test]
+dependencies = [
+  "pytest",
+  "pytest-cov",
+]
+
+[tool.ruff.lint]
+select = [
+  # Pyflakes
+  "F",
+  # pyupgrade
+  "UP",
+  # flake8-bugbear
+  "B",
+  # flake8-simplify
+  "SIM",
+  # isort
+  "I",
+]
