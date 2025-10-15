@@ -8,7 +8,7 @@ This project is inspired by timtim589's project [here](https://github.com/timtim
 
 The dataflow:
 
-:::mermaid
+::: mermaid
 flowchart LR
 direction TB
 
