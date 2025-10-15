@@ -8,7 +8,7 @@ This project is inspired by timtim589's project [here](https://github.com/timtim
 
 The dataflow:
 
-::: mermaid
+```mermaid
 flowchart LR
 direction TB
 
@@ -29,7 +29,7 @@ sample --> file & inline -- load sample --> ingestions
 query --> file & inline -- load queries --> queries
 
 queries & ingestions --> checks -- check through queries --> result
-:::
+```
 
 # Todo
 
