@@ -9,7 +9,7 @@ from azure.kusto.data.helpers import dataframe_from_result_table
 
 from .constants import DEFAULT_DATABASE_NAME
 from .logging import get_logger
-from .queries import extract_queries_from_directory
+from .queries import extract_queries_from_directory, extract_queries_from_list
 
 logger = get_logger()
 
@@ -47,6 +47,24 @@ def check_directory_queries(
     """Executes queries and produces human-readable results.
 
     Returns a dictionary with query name as key and query result or error message as value.
+
+
+    The schema of the returned dictionary is as follows:
+
+    ```
+    {
+        "success": {
+            "query_name_1": <pandas DataFrame>,
+            "query_name_2": <pandas DataFrame>,
+            ...
+        },
+        "errors": {
+            "query_name_3": "Error message string",
+            "query_name_4": "Error message string",
+            ...
+        }
+    }
+    ```
     """
 
     queries = extract_queries_from_directory(detection_dir)
@@ -56,7 +74,54 @@ def check_directory_queries(
     }
 
     for query_name, query in queries:
-        result, error = check_single_query(client, query_name, query, query_properties)
+        result, error = check_single_query(
+            client, query_name, query, query_properties
+        )
+        if error:
+            results["errors"][query_name] = error
+        else:
+            results["success"][query_name] = result
+
+    return results
+
+
+def check_list_queries(
+    client: KustoClient,
+    detection_list: list[tuple[str, str]],
+    query_properties: ClientRequestProperties = None,
+) -> dict:
+    """Executes queries from a list and produces human-readable results.
+
+    Returns a dictionary with query name as key and query result or error message as value.
+
+    The schema of the returned dictionary is as follows:
+
+    ```
+    {
+        "success": {
+            "query_name_1": <pandas DataFrame>,
+            "query_name_2": <pandas DataFrame>,
+            ...
+        },
+        "errors": {
+            "query_name_3": "Error message string",
+            "query_name_4": "Error message string",
+            ...
+        }
+    }
+    ```
+    """
+
+    queries = extract_queries_from_list(detection_list)
+    results = {
+        "success": {},
+        "errors": {},
+    }
+
+    for query_name, query in queries:
+        result, error = check_single_query(
+            client, query_name, query, query_properties
+        )
         if error:
             results["errors"][query_name] = error
         else:

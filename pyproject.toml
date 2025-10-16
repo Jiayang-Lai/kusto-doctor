@@ -77,3 +77,6 @@ select = [
   # isort
   "I",
 ]
+
+[tool.ruff]
+line-length = 79

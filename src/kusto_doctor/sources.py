@@ -19,15 +19,19 @@ class TableSource(ABC):
     @abstractmethod
     def load(
         self,
-    ) -> Generator[tuple[str, list[ColumnSchema], list[dict | str], IngestionMethod], None, None]:
+    ) -> Generator[
+        tuple[str, list[ColumnSchema], list[dict | str], IngestionMethod],
+        None,
+        None,
+    ]:
         """Loads data from the source and returns it as a generator.
 
         Yields:
             A generator of tuples, each containing:
-            - table name (str)
+            - table_name (str)
             - schema (list of ColumnSchema)
-            - table data (list of dicts (representing rows))
-            - load type (IngestionMethod): how to ingest the data
+            - table_data (list of dicts (for inline) or str (for from_storage))
+            - load_type (IngestionMethod): how to ingest the data
         """
 
 
@@ -42,7 +46,9 @@ class DirectoryTableSource(TableSource):
     def load_schema(self, schema_file: Path) -> list[ColumnSchema]:
         """Loads the schema from a JSON file."""
         if not schema_file.exists() or not schema_file.is_file():
-            raise SourceLoadError(f"Schema file {schema_file} does not exist or is not a file.")
+            raise SourceLoadError(
+                f"Schema file {schema_file} does not exist or is not a file."
+            )
 
         with schema_file.open(encoding="utf8") as f:
             raw_schema = json.load(f)
@@ -59,14 +65,18 @@ class DirectoryTableSource(TableSource):
     def load_data(self, data_file: Path) -> list[dict]:
         """Loads the table data from a JSON file."""
         if not data_file.exists() or not data_file.is_file():
-            raise SourceLoadError(f"Data file {data_file} does not exist or is not a file.")
+            raise SourceLoadError(
+                f"Data file {data_file} does not exist or is not a file."
+            )
 
         with data_file.open(encoding="utf8") as f:
             data = json.load(f)
 
         return data
 
-    def load_from_files(self, schema_file: Path, data_file: Path) -> tuple[list[ColumnSchema], list[dict]]:
+    def load_from_files(
+        self, schema_file: Path, data_file: Path
+    ) -> tuple[list[ColumnSchema], list[dict]]:
         """Loads schema and data from specified files."""
         schema = self.load_schema(schema_file)
         data = self.load_data(data_file)
@@ -75,9 +85,15 @@ class DirectoryTableSource(TableSource):
 
     def load(
         self,
-    ) -> Generator[tuple[str, list[ColumnSchema], list[dict | str], IngestionMethod], None, None]:
+    ) -> Generator[
+        tuple[str, list[ColumnSchema], list[dict | str], IngestionMethod],
+        None,
+        None,
+    ]:
         if not self.directory.exists() or not self.directory.is_dir():
-            raise SourceLoadError(f"Directory {self.directory} does not exist or is not a directory.")
+            raise SourceLoadError(
+                f"Directory {self.directory} does not exist or is not a directory."
+            )
 
         try:
             for table_folder in self.directory.iterdir():
@@ -91,7 +107,10 @@ class DirectoryTableSource(TableSource):
                     load_type = IngestionMethod.FROM_STORAGE
                     source_file = table_folder / "from_storage"
                     if not source_file.is_file():
-                        raise SourceLoadError("Expected a file at " f"{source_file} for from_storage ingestion.")
+                        raise SourceLoadError(
+                            "Expected a file at "
+                            f"{source_file} for from_storage ingestion."
+                        )
                     data = self.load_data(source_file)
                     schema = self.load_schema(table_folder / "schema.json")
 
@@ -108,7 +127,9 @@ class DirectoryTableSource(TableSource):
                 yield table_folder.name, schema, data, load_type
 
         except Exception as e:
-            raise SourceLoadError(f"Failed to load data from {self.directory}: {e}") from e
+            raise SourceLoadError(
+                f"Failed to load data from {self.directory}: {e}"
+            ) from e
 
 
 class QuerySource(ABC):
@@ -132,11 +153,15 @@ class DirectoryQuerySource(QuerySource):
         self.directory = directory
         self.navigator = navigator or []
         if not self.directory.exists() or not self.directory.is_dir():
-            raise SourceLoadError(f"Directory {self.directory} does not exist or is not a directory.")
+            raise SourceLoadError(
+                f"Directory {self.directory} does not exist or is not a directory."
+            )
 
     def load_queries(self) -> Generator[tuple[str, str], None, None]:
         if not self.directory.exists() or not self.directory.is_dir():
-            raise SourceLoadError(f"Directory {self.directory} does not exist or is not a directory.")
+            raise SourceLoadError(
+                f"Directory {self.directory} does not exist or is not a directory."
+            )
 
         try:
             for file in self.directory.iterdir():
@@ -144,7 +169,11 @@ class DirectoryQuerySource(QuerySource):
                     query_object = None
                     with file.open(encoding="utf8") as f:
                         query_object = json.load(f)
-                    query_object = extract_nested_value(query_object, self.navigator)
+                    query_object = extract_nested_value(
+                        query_object, self.navigator
+                    )
                     yield file.stem, query_object
         except Exception as e:
-            raise SourceLoadError(f"Failed to load queries from {self.directory}: {e}") from e
+            raise SourceLoadError(
+                f"Failed to load queries from {self.directory}: {e}"
+            ) from e

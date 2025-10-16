@@ -10,7 +10,9 @@ from .sources import DirectoryQuerySource
 logger = get_logger()
 
 
-def extract_queries_from_directory(detection_dir: str = None) -> List[Tuple[str, str]]:
+def extract_queries_from_directory(
+    detection_dir: str = None,
+) -> List[Tuple[str, str]]:
     """Retrieves all queries from <detection_dir>.
     Returns a list of tuples, where the first element is the detection file name,
     and the second element is the query text."""
@@ -28,7 +30,9 @@ def extract_queries_from_directory(detection_dir: str = None) -> List[Tuple[str,
     # Loading Sentinel detections
     sentinel_query_navigator = ["properties", "query"]
     try:
-        sentinel_query_source = DirectoryQuerySource(sentinel_detection_folder, sentinel_query_navigator)
+        sentinel_query_source = DirectoryQuerySource(
+            sentinel_detection_folder, sentinel_query_navigator
+        )
         for detection_name, query in sentinel_query_source.load_queries():
             queries.append((detection_name, query))
     except SourceLoadError as sle:
@@ -39,7 +43,9 @@ def extract_queries_from_directory(detection_dir: str = None) -> List[Tuple[str,
     # Loading Defender detections
     defender_query_navigator = ["queryCondition", "queryText"]
     try:
-        defender_query_source = DirectoryQuerySource(defender_detection_folder, defender_query_navigator)
+        defender_query_source = DirectoryQuerySource(
+            defender_detection_folder, defender_query_navigator
+        )
         for detection_name, query in defender_query_source.load_queries():
             queries.append((detection_name, query))
     except SourceLoadError as sle:
@@ -48,4 +54,31 @@ def extract_queries_from_directory(detection_dir: str = None) -> List[Tuple[str,
         logger.error(f"Failed to load defender queries: {e}")
 
     logger.info(f"Collected {len(queries)} queries.")
+    return queries
+
+
+def extract_queries_from_list(
+    detection_list: List[Tuple[str, str]],
+) -> List[Tuple[str, str]]:
+    """Retrieves all queries from a list of (detection_name, query_text) tuples.
+    Returns a list of tuples, where the first element is the query name,
+    and the second element is the query text."""
+
+    queries = []
+    if not detection_list:
+        logger.warning("No detections provided.")
+        return []
+
+    try:
+        for detection_name, query_text in detection_list:
+            try:
+                queries.append((detection_name, query_text))
+            except Exception as e:
+                logger.error(
+                    f"Failed to extract query from {detection_name}: {e}"
+                )
+    except Exception as e:
+        logger.error(f"Failed to process detection list: {e}")
+
+    logger.info(f"Extracted {len(queries)} queries from provided list.")
     return queries

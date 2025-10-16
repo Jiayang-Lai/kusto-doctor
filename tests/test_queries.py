@@ -7,7 +7,10 @@ import tempfile
 from unittest.mock import MagicMock, patch
 
 from src.kusto_doctor.exceptions import SourceLoadError
-from src.kusto_doctor.queries import extract_queries_from_directory
+from src.kusto_doctor.queries import (
+    extract_queries_from_directory,
+    extract_queries_from_list,
+)
 
 
 def get_test_detections_dir():
@@ -70,7 +73,9 @@ def test_extract_queries_with_nonexistent_directory(caplog):
 
     # Should be empty since directories don't exist
     assert queries == []
-    assert f"Using provided detection directory: {nonexistent_dir}" in caplog.text
+    assert (
+        f"Using provided detection directory: {nonexistent_dir}" in caplog.text
+    )
 
 
 def test_extract_queries_with_temp_directory_structure(caplog):
@@ -113,7 +118,10 @@ def test_extract_queries_with_mocked_source(mock_source_class, caplog):
     mock_defender_source = MagicMock()
 
     # Configure the mock to return different instances for different calls
-    mock_source_class.side_effect = [mock_sentinel_source, mock_defender_source]
+    mock_source_class.side_effect = [
+        mock_sentinel_source,
+        mock_defender_source,
+    ]
 
     # Configure the load_queries method to return test data
     mock_sentinel_source.load_queries.return_value = [
@@ -187,13 +195,15 @@ def test_extract_queries_real_test_data(caplog):
     ]
 
     for expected in expected_detections:
-        assert expected in query_names, (
-            f"Expected detection '{expected}' not found in results"
-        )
+        assert (
+            expected in query_names
+        ), f"Expected detection '{expected}' not found in results"
 
     # Verify query content is not empty
     for name, query in queries:
-        assert query.strip() != "", f"Query for detection '{name}' should not be empty"
+        assert (
+            query.strip() != ""
+        ), f"Query for detection '{name}' should not be empty"
 
 
 def test_extract_queries_directory_navigator_paths():
@@ -249,7 +259,9 @@ def test_extract_queries_logging_behavior(caplog):
     log_messages = [record.message for record in caplog.records]
 
     # Should log the directory being used
-    assert any("Using provided detection directory:" in msg for msg in log_messages)
+    assert any(
+        "Using provided detection directory:" in msg for msg in log_messages
+    )
 
     # Should log the count of collected queries
     assert any("Collected" in msg and "queries" in msg for msg in log_messages)
@@ -260,3 +272,211 @@ def test_extract_queries_logging_behavior(caplog):
     ][0]
     expected_count = len(queries)
     assert str(expected_count) in count_log
+
+
+def test_extract_queries_from_list_with_valid_data(caplog):
+    """Test extracting queries from a valid list of detection tuples."""
+    caplog.set_level(logging.INFO)
+
+    detection_list = [
+        ("detection1", "Table1 | where Column == 'value1'"),
+        ("detection2", "Table2 | summarize count() by Category"),
+        ("detection3", "SecurityEvent | where EventID == 4624"),
+    ]
+
+    queries = extract_queries_from_list(detection_list)
+
+    assert len(queries) == 3
+
+    # Verify the queries are returned as-is
+    for i, (name, query) in enumerate(queries):
+        expected_name, expected_query = detection_list[i]
+        assert name == expected_name
+        assert query == expected_query
+
+    # Check logging
+    assert "Extracted 3 queries from provided list." in caplog.text
+
+
+def test_extract_queries_from_list_with_empty_list(caplog):
+    """Test extracting queries from an empty list."""
+    caplog.set_level(logging.WARNING)
+
+    queries = extract_queries_from_list([])
+
+    assert queries == []
+    assert "No detections provided." in caplog.text
+
+
+def test_extract_queries_from_list_with_none(caplog):
+    """Test extracting queries when None is provided."""
+    caplog.set_level(logging.WARNING)
+
+    queries = extract_queries_from_list(None)
+
+    assert queries == []
+    assert "No detections provided." in caplog.text
+
+
+def test_extract_queries_from_list_with_single_detection(caplog):
+    """Test extracting queries from a list with a single detection."""
+    caplog.set_level(logging.INFO)
+
+    detection_list = [("single_detection", "AuditLogs | take 10")]
+
+    queries = extract_queries_from_list(detection_list)
+
+    assert len(queries) == 1
+    assert queries[0] == ("single_detection", "AuditLogs | take 10")
+    assert "Extracted 1 queries from provided list." in caplog.text
+
+
+def test_extract_queries_from_list_with_empty_strings(caplog):
+    """Test extracting queries with empty detection names or queries."""
+    caplog.set_level(logging.INFO)
+
+    detection_list = [
+        ("", "Table | where Column == 'value'"),
+        ("detection_with_empty_query", ""),
+        ("normal_detection", "Table | count"),
+    ]
+
+    queries = extract_queries_from_list(detection_list)
+
+    # Should still process all entries, including empty strings
+    assert len(queries) == 3
+    assert queries[0] == ("", "Table | where Column == 'value'")
+    assert queries[1] == ("detection_with_empty_query", "")
+    assert queries[2] == ("normal_detection", "Table | count")
+
+
+def test_extract_queries_from_list_with_special_characters(caplog):
+    """Test extracting queries with special characters in names and queries."""
+    caplog.set_level(logging.INFO)
+
+    detection_list = [
+        (
+            "detection-with-dashes",
+            "Table | where Column contains 'test-value'",
+        ),
+        (
+            "detection_with_unicode_😀",
+            "Table | where Message contains 'émoji'",
+        ),
+        (
+            "detection.with.dots",
+            "Table | where Path contains 'C:\\Windows\\System32'",
+        ),
+    ]
+
+    queries = extract_queries_from_list(detection_list)
+
+    assert len(queries) == 3
+
+    # Verify special characters are preserved
+    assert queries[0][0] == "detection-with-dashes"
+    assert queries[1][0] == "detection_with_unicode_😀"
+    assert queries[2][0] == "detection.with.dots"
+    assert "C:\\Windows\\System32" in queries[2][1]
+
+
+@patch("src.kusto_doctor.queries.logger")
+def test_extract_queries_from_list_with_invalid_tuple_structure(
+    mock_logger, caplog
+):
+    """Test behavior when list contains invalid tuple structures."""
+    caplog.set_level(logging.ERROR)
+
+    # This would cause an exception when trying to unpack
+    invalid_detection_list = [
+        ("valid_detection", "valid query"),
+        ("single_element",),  # Invalid - only one element
+        ("too", "many", "elements"),  # Invalid - too many elements
+    ]
+
+    # The function should handle this gracefully and log errors
+    _ = extract_queries_from_list(invalid_detection_list)
+
+    # Should process the valid detection and handle errors for invalid ones
+    # The exact behavior depends on implementation, but errors should be logged
+    assert mock_logger.error.called
+
+
+def test_extract_queries_from_list_with_large_dataset():
+    """Test extracting queries from a large list to verify performance."""
+    # Generate a large list of detections
+    large_detection_list = [
+        (f"detection_{i}", f"Table{i} | where Column == 'value{i}'")
+        for i in range(1000)
+    ]
+
+    queries = extract_queries_from_list(large_detection_list)
+
+    assert len(queries) == 1000
+
+    # Spot check a few entries
+    assert queries[0] == ("detection_0", "Table0 | where Column == 'value0'")
+    assert queries[500] == (
+        "detection_500",
+        "Table500 | where Column == 'value500'",
+    )
+    assert queries[999] == (
+        "detection_999",
+        "Table999 | where Column == 'value999'",
+    )
+
+
+def test_extract_queries_from_list_preserves_order():
+    """Test that the function preserves the order of the input list."""
+    detection_list = [
+        ("z_detection", "last query"),
+        ("a_detection", "first query"),
+        ("m_detection", "middle query"),
+    ]
+
+    queries = extract_queries_from_list(detection_list)
+
+    # Order should be preserved, not alphabetical
+    assert queries[0][0] == "z_detection"
+    assert queries[1][0] == "a_detection"
+    assert queries[2][0] == "m_detection"
+
+
+def test_extract_queries_from_list_with_multiline_queries(caplog):
+    """Test extracting queries that span multiple lines."""
+    caplog.set_level(logging.INFO)
+
+    multiline_query = """SecurityEvent
+| where TimeGenerated > ago(24h)
+| where EventID == 4624
+| summarize count() by Account"""
+
+    detection_list = [
+        ("multiline_detection", multiline_query),
+        ("single_line", "Table | count"),
+    ]
+
+    queries = extract_queries_from_list(detection_list)
+
+    assert len(queries) == 2
+    assert queries[0][1] == multiline_query
+    assert "\n" in queries[0][1]  # Verify newlines are preserved
+
+
+def test_extract_queries_from_list_logging_behavior(caplog):
+    """Test the logging behavior of extract_queries_from_list."""
+    caplog.set_level(logging.INFO)
+
+    detection_list = [("det1", "query1"), ("det2", "query2")]
+
+    queries = extract_queries_from_list(detection_list)
+
+    # Check that the correct log message is generated
+    log_messages = [record.message for record in caplog.records]
+    assert any(
+        "Extracted 2 queries from provided list." in msg
+        for msg in log_messages
+    )
+
+    # Verify the count in the log matches actual results
+    assert len(queries) == 2

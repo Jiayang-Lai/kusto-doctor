@@ -80,7 +80,9 @@ class SingletonLogger:
 
 # Public API functions for users
 def configure_logging(
-    level: str = "INFO", console_output: bool = True, name: str = "kusto_doctor"
+    level: str = "INFO",
+    console_output: bool = True,
+    name: str = "kusto_doctor",
 ) -> None:
     """Configure logging for the kusto_doctor package.
 
