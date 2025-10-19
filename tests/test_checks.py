@@ -266,11 +266,11 @@ def test_check_list_queries_with_none_properties():
         mock_check.return_value = (None, None)
 
         # Should handle None properties gracefully
-        _ = checks.check_list_queries(mock_client, detection_list, None)
+        _ = checks.check_list_queries(mock_client, detection_list, None, None)
 
         # Verify check_single_query was called with None properties
         mock_check.assert_called_once_with(
-            mock_client, "test_query", "Table | count", None
+            mock_client, "test_query", "Table | count", None, None
         )
 
 

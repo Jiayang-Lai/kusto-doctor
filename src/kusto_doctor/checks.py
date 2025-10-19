@@ -43,6 +43,7 @@ def check_directory_queries(
     client: KustoClient,
     detection_dir: str = None,
     query_properties: ClientRequestProperties = None,
+    database_name: str = DEFAULT_DATABASE_NAME,
 ) -> dict:
     """Executes queries and produces human-readable results.
 
@@ -75,7 +76,7 @@ def check_directory_queries(
 
     for query_name, query in queries:
         result, error = check_single_query(
-            client, query_name, query, query_properties
+            client, query_name, query, query_properties, database_name
         )
         if error:
             results["errors"][query_name] = error
@@ -89,6 +90,7 @@ def check_list_queries(
     client: KustoClient,
     detection_list: list[tuple[str, str]],
     query_properties: ClientRequestProperties = None,
+    database_name: str = DEFAULT_DATABASE_NAME,
 ) -> dict:
     """Executes queries from a list and produces human-readable results.
 
@@ -120,7 +122,11 @@ def check_list_queries(
 
     for query_name, query in queries:
         result, error = check_single_query(
-            client, query_name, query, query_properties
+            client,
+            query_name,
+            query,
+            query_properties,
+            database_name,
         )
         if error:
             results["errors"][query_name] = error
