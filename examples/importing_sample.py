@@ -10,14 +10,10 @@ logging.basicConfig(level=logging.INFO)
 def create_test_table():
     with buildKustoClient() as client:
         test_schema = [
-            ColumnSchema(
-                ColumnName="QueryName", ColumnType=KustoDataType.string
-            ),
+            ColumnSchema(ColumnName="QueryName", ColumnType=KustoDataType.string),
             ColumnSchema(ColumnName="Query", ColumnType=KustoDataType.string),
             ColumnSchema(ColumnName="Status", ColumnType=KustoDataType.string),
-            ColumnSchema(
-                ColumnName="__test__", ColumnType=KustoDataType.string
-            ),
+            ColumnSchema(ColumnName="__test__", ColumnType=KustoDataType.string),
         ]
         create_table(
             client=client,

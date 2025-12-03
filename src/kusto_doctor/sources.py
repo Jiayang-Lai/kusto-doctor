@@ -169,9 +169,7 @@ class DirectoryQuerySource(QuerySource):
                     query_object = None
                     with file.open(encoding="utf8") as f:
                         query_object = json.load(f)
-                    query_object = extract_nested_value(
-                        query_object, self.navigator
-                    )
+                    query_object = extract_nested_value(query_object, self.navigator)
                     yield file.stem, query_object
         except Exception as e:
             raise SourceLoadError(

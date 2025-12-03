@@ -16,9 +16,7 @@ def test_valid_table_names():
     ]
 
     for name in valid_names:
-        assert is_valid_kusto_table_name(
-            name
-        ), f"Expected '{name}' to be valid"
+        assert is_valid_kusto_table_name(name), f"Expected '{name}' to be valid"
 
 
 def test_invalid_table_names():
@@ -56,9 +54,7 @@ def test_invalid_table_names():
     ]
 
     for name in invalid_names:
-        assert not is_valid_kusto_table_name(
-            name
-        ), f"Expected '{name}' to be invalid"
+        assert not is_valid_kusto_table_name(name), f"Expected '{name}' to be invalid"
 
 
 def test_kql_keywords_rejected():
@@ -86,24 +82,24 @@ def test_kql_keywords_rejected():
     ]
 
     for keyword in kql_keywords:
-        assert not is_valid_kusto_table_name(
-            keyword
-        ), f"Expected KQL keyword '{keyword}' to be rejected"
+        assert not is_valid_kusto_table_name(keyword), (
+            f"Expected KQL keyword '{keyword}' to be rejected"
+        )
 
 
 def test_length_constraints():
     """Test table name length constraints."""
     # Test maximum valid length (1024 characters)
     max_valid = "A" * 1024
-    assert is_valid_kusto_table_name(
-        max_valid
-    ), "Expected 1024-character name to be valid"
+    assert is_valid_kusto_table_name(max_valid), (
+        "Expected 1024-character name to be valid"
+    )
 
     # Test exceeding maximum length
     too_long = "A" * 1025
-    assert not is_valid_kusto_table_name(
-        too_long
-    ), "Expected 1025-character name to be invalid"
+    assert not is_valid_kusto_table_name(too_long), (
+        "Expected 1025-character name to be invalid"
+    )
 
 
 def test_reserved_patterns():
@@ -117,9 +113,9 @@ def test_reserved_patterns():
     ]
 
     for pattern in reserved_patterns:
-        assert not is_valid_kusto_table_name(
-            pattern
-        ), f"Expected reserved pattern '{pattern}' to be rejected"
+        assert not is_valid_kusto_table_name(pattern), (
+            f"Expected reserved pattern '{pattern}' to be rejected"
+        )
 
 
 def test_edge_cases():
@@ -133,9 +129,9 @@ def test_edge_cases():
     ]
 
     for name in containing_keywords:
-        assert is_valid_kusto_table_name(
-            name
-        ), f"Expected '{name}' (contains keyword but isn't exact match) to be valid"
+        assert is_valid_kusto_table_name(name), (
+            f"Expected '{name}' (contains keyword but isn't exact match) to be valid"
+        )  # noqa: E501
 
     # Numbers and underscores in various positions
     numeric_cases = [
@@ -148,9 +144,7 @@ def test_edge_cases():
     ]
 
     for name in numeric_cases:
-        assert is_valid_kusto_table_name(
-            name
-        ), f"Expected '{name}' to be valid"
+        assert is_valid_kusto_table_name(name), f"Expected '{name}' to be valid"
 
 
 def test_unicode_and_special_chars():
@@ -168,6 +162,4 @@ def test_unicode_and_special_chars():
         # depending on the regex. This test documents the expected behavior.
         result = is_valid_kusto_table_name(name)
         # The function should reject non-ASCII characters for security
-        assert (
-            not result
-        ), f"Expected Unicode name '{name}' to be rejected for security"
+        assert not result, f"Expected Unicode name '{name}' to be rejected for security"

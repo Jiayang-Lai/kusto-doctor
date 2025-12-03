@@ -23,7 +23,8 @@ def check_single_query(
 ) -> tuple[Optional[pandas.DataFrame], Optional[str]]:
     """Checks a single query for syntax and execution errors.
 
-    Returns tuple of (a pandas DataFrame if successful, error message string if the query failed).
+    Returns tuple of (a pandas DataFrame if successful,
+    error message string if the query failed).
     """
 
     try:
@@ -47,7 +48,8 @@ def check_directory_queries(
 ) -> dict:
     """Executes queries and produces human-readable results.
 
-    Returns a dictionary with query name as key and query result or error message as value.
+    Returns a dictionary with query name as key
+    and query result or error message as value.
 
 
     The schema of the returned dictionary is as follows:
@@ -94,7 +96,8 @@ def check_list_queries(
 ) -> dict:
     """Executes queries from a list and produces human-readable results.
 
-    Returns a dictionary with query name as key and query result or error message as value.
+    Returns a dictionary with query name as key
+    and query result or error message as value.
 
     The schema of the returned dictionary is as follows:
 

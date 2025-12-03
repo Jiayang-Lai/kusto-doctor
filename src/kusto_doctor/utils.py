@@ -35,7 +35,8 @@ def buildKustoStreamingIngestClient(
     """Builds and returns a KustoStreamingIngestClient using environment variables.
 
     Returns:
-        KustoStreamingIngestClient: Configured streaming ingest client for data ingestion
+        KustoStreamingIngestClient: Configured streaming ingest client
+        for data ingestion
     """
     if kcsb is None:
         logger.info(
@@ -103,7 +104,8 @@ def is_valid_kusto_table_name(table_name: str) -> bool:
         return False
 
     # Check for valid characters: letters, digits, underscores
-    # Using regex pattern that matches the Kusto specification (no spaces, dashes or dots allowed)
+    # Using regex pattern that matches the Kusto specification
+    # (no spaces, dashes or dots allowed)
     valid_pattern = re.compile(r"^[a-zA-Z0-9_]+$")
     if not valid_pattern.match(table_name):
         return False

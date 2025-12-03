@@ -24,9 +24,7 @@ def test_check_directory_queries(caplog):
     custom_datetime = datetime(2024, 10, 30, 0, 0, 0)
     properties.set_option("query_now", custom_datetime.isoformat())
     with buildKustoClient() as client:
-        result = checks.check_directory_queries(
-            client, mock_query_dir, properties
-        )
+        result = checks.check_directory_queries(client, mock_query_dir, properties)
         assert len(result["success"]) == 2
         success_keys = ["ValidKqlDetection", "LookBack"]
         for key in success_keys:
@@ -173,9 +171,7 @@ def test_check_list_queries_success(caplog):
         ]
 
         properties = ClientRequestProperties()
-        results = checks.check_list_queries(
-            mock_client, detection_list, properties
-        )
+        results = checks.check_list_queries(mock_client, detection_list, properties)
 
         # Verify results structure
         assert "success" in results
@@ -230,9 +226,7 @@ def test_check_list_queries_empty_list():
     """Test check_list_queries with empty detection list."""
     mock_client = MagicMock()
 
-    with patch(
-        "src.kusto_doctor.checks.extract_queries_from_list"
-    ) as mock_extract:
+    with patch("src.kusto_doctor.checks.extract_queries_from_list") as mock_extract:
         mock_extract.return_value = []
 
         results = checks.check_list_queries(mock_client, [])

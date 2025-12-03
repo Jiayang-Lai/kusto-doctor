@@ -139,9 +139,7 @@ def ingest_data_inline_experimental(
         # ingestion_mapping_kind=IngestionMappingKind.JSON,
         # flush_immediately=True,
     )
-    streaming_client: KustoStreamingIngestClient = (
-        buildKustoStreamingIngestClient()
-    )
+    streaming_client: KustoStreamingIngestClient = buildKustoStreamingIngestClient()
 
     try:
         data_stream = io.BytesIO()
@@ -184,9 +182,7 @@ def ingest_csv_data_from_storage(
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
 
-    logger.info(
-        f"Attempting to ingest data into {table_name} from source {source}..."
-    )
+    logger.info(f"Attempting to ingest data into {table_name} from source {source}...")
     ingest_first_line = "true" if ignore_first_record else "false"
     ingest_cmd = (
         f".ingest into table {table_name}(h'{source}') with "
@@ -212,9 +208,7 @@ def ingest_json_data_from_storage(
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
 
-    logger.info(
-        f"Attempting to ingest data into {table_name} from source {source}..."
-    )
+    logger.info(f"Attempting to ingest data into {table_name} from source {source}...")
     ingest_cmd = (
         f".ingest into table {table_name}(h'{source}') with "
         f"(format='json', ingestionMappingReference = '{mapping_name}')"
@@ -223,9 +217,7 @@ def ingest_json_data_from_storage(
     logger.info(f"Data ingested into {table_name} from source {source}")
 
 
-def load_tables_from_directory(
-    sample_data_dir: str = None, database_name: str = None
-):
+def load_tables_from_directory(sample_data_dir: str = None, database_name: str = None):
     """Loads sample data from a directory into the specified database.
 
     The directory should have the following structure:
@@ -242,9 +234,7 @@ def load_tables_from_directory(
     """
 
     if sample_data_dir:
-        logging.info(
-            f"Using provided sample data directory: {sample_data_dir}"
-        )
+        logging.info(f"Using provided sample data directory: {sample_data_dir}")
     else:
         sample_data_dir = os.path.join(os.getcwd(), "sampledata")
         logger.warning(
@@ -282,12 +272,8 @@ def load_tables_from_directory(
                 # Load data
                 if load_type is IngestionMethod.INLINE:
                     # Create JSON mapping and ingest data
-                    create_json_mapping(
-                        client, database_name, table_folder, schema
-                    )
-                    ingest_data_inline(
-                        client, database_name, table_folder, table_data
-                    )
+                    create_json_mapping(client, database_name, table_folder, schema)
+                    ingest_data_inline(client, database_name, table_folder, table_data)
                     # ingest_data_inline_experimental(
                     #     client, database_name, table_folder, table_data
                     # )
@@ -296,7 +282,7 @@ def load_tables_from_directory(
                         for row in table_data:
                             if not isinstance(row, str):
                                 raise ValueError(
-                                    f"Expected each entry in from_storage to be a string "
+                                    f"Expected each entry in from_storage to be a string "  # noqa: E501
                                     f"path, got {type(row)}"
                                 )
                             ingest_csv_data_from_storage(

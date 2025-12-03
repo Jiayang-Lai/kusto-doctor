@@ -74,9 +74,7 @@ def extract_queries_from_list(
             try:
                 queries.append((detection_name, query_text))
             except Exception as e:
-                logger.error(
-                    f"Failed to extract query from {detection_name}: {e}"
-                )
+                logger.error(f"Failed to extract query from {detection_name}: {e}")
     except Exception as e:
         logger.error(f"Failed to process detection list: {e}")
 

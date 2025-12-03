@@ -20,7 +20,7 @@ def get_test_detections_dir():
 
 
 def test_extract_queries_with_valid_directory(caplog):
-    """Test extracting queries from a valid directory with sentinel and defender detections."""
+    """Test extracting queries from a valid directory with sentinel and defender detections."""  # noqa: E501
     caplog.set_level(logging.INFO)
 
     test_detections_dir = get_test_detections_dir()
@@ -73,9 +73,7 @@ def test_extract_queries_with_nonexistent_directory(caplog):
 
     # Should be empty since directories don't exist
     assert queries == []
-    assert (
-        f"Using provided detection directory: {nonexistent_dir}" in caplog.text
-    )
+    assert f"Using provided detection directory: {nonexistent_dir}" in caplog.text
 
 
 def test_extract_queries_with_temp_directory_structure(caplog):
@@ -177,7 +175,7 @@ def test_extract_queries_with_source_error(mock_source_class, caplog):
 
 
 def test_extract_queries_real_test_data(caplog):
-    """Test with the actual test detection files to verify expected behavior."""
+    """Test with the actual test detection files to verify expected behavior."""  # noqa: E501
     caplog.set_level(logging.INFO)
 
     test_detections_dir = get_test_detections_dir()
@@ -195,15 +193,13 @@ def test_extract_queries_real_test_data(caplog):
     ]
 
     for expected in expected_detections:
-        assert (
-            expected in query_names
-        ), f"Expected detection '{expected}' not found in results"
+        assert expected in query_names, (
+            f"Expected detection '{expected}' not found in results"
+        )
 
     # Verify query content is not empty
     for name, query in queries:
-        assert (
-            query.strip() != ""
-        ), f"Query for detection '{name}' should not be empty"
+        assert query.strip() != "", f"Query for detection '{name}' should not be empty"
 
 
 def test_extract_queries_directory_navigator_paths():
@@ -216,7 +212,8 @@ def test_extract_queries_directory_navigator_paths():
     sentinel_queries = []
     defender_queries = []
 
-    # We can infer which are sentinel vs defender based on the test file structure
+    # We can infer which are sentinel or defender
+    # based on the test file structure
     # and the content we know exists in the test files
     for name, query in queries:
         if (
@@ -259,9 +256,7 @@ def test_extract_queries_logging_behavior(caplog):
     log_messages = [record.message for record in caplog.records]
 
     # Should log the directory being used
-    assert any(
-        "Using provided detection directory:" in msg for msg in log_messages
-    )
+    assert any("Using provided detection directory:" in msg for msg in log_messages)
 
     # Should log the count of collected queries
     assert any("Collected" in msg and "queries" in msg for msg in log_messages)
@@ -381,9 +376,7 @@ def test_extract_queries_from_list_with_special_characters(caplog):
 
 
 @patch("src.kusto_doctor.queries.logger")
-def test_extract_queries_from_list_with_invalid_tuple_structure(
-    mock_logger, caplog
-):
+def test_extract_queries_from_list_with_invalid_tuple_structure(mock_logger, caplog):
     """Test behavior when list contains invalid tuple structures."""
     caplog.set_level(logging.ERROR)
 
@@ -473,10 +466,7 @@ def test_extract_queries_from_list_logging_behavior(caplog):
 
     # Check that the correct log message is generated
     log_messages = [record.message for record in caplog.records]
-    assert any(
-        "Extracted 2 queries from provided list." in msg
-        for msg in log_messages
-    )
+    assert any("Extracted 2 queries from provided list." in msg for msg in log_messages)
 
     # Verify the count in the log matches actual results
     assert len(queries) == 2
