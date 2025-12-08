@@ -1,3 +1,4 @@
+"""Unit tests for Kusto Doctor checks module."""
 import logging
 import pathlib
 from datetime import datetime
@@ -13,6 +14,7 @@ from src.kusto_doctor.utils import buildKustoClient
 
 
 def test_check_directory_queries(caplog):
+    """Test check_directory_queries with a mock query directory."""
     caplog.set_level(logging.INFO)
     current_dir = pathlib.Path(__file__).parent.resolve()
     mock_query_dir = current_dir / "detections"

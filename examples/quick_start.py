@@ -1,13 +1,4 @@
-"""
-Quick Start Example for Kusto-Doctor
-
-This example demonstrates the basic usage of Kusto-Doctor:
-1. Creating a table with a custom schema
-2. Ingesting sample data
-3. Validating queries against the table
-4. Cleaning up by clearing the table data
-"""
-
+"""Quick Start Example for Kusto-Doctor."""
 import logging
 from datetime import datetime
 
@@ -19,12 +10,19 @@ from kusto_doctor.models import ColumnSchema, KustoDataType
 from kusto_doctor.tables import create_table
 from kusto_doctor.utils import buildKustoClient
 
+"""
+This example demonstrates the basic usage of Kusto-Doctor:
+1. Creating a table with a custom schema
+2. Ingesting sample data
+3. Validating queries against the table
+4. Cleaning up by clearing the table data
+"""
+
 logging.basicConfig(level=logging.INFO)
 
 
 def main():
     """Run the quick start example."""
-
     with buildKustoClient() as client:
         # Step 1: Create a table with custom schema
         logging.info("Creating a test table...")

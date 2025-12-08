@@ -7,8 +7,8 @@ from enum import Enum
 class KustoDataType(Enum):
     """Enumeration of valid Kusto data types.
 
-    Reference: https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/scalar-data-types"""
-
+    Reference: https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/scalar-data-types
+    """
     bool = "bool"
     datetime = "datetime"
     decimal = "decimal"

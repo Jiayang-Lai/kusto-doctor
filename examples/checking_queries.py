@@ -1,3 +1,4 @@
+"""Checking Queries Example Script."""
 import logging
 import pathlib
 from datetime import datetime
@@ -12,6 +13,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def run_checks_from_directory():
+    """Run checks on queries from a directory."""
     configure_logging(console_output=False)
     current_dir = pathlib.Path(__file__).parent.parent.resolve()
     mock_query_dir = current_dir / "tests" / "detections"
@@ -26,6 +28,7 @@ def run_checks_from_directory():
 
 
 def run_checks_from_list():
+    """Run checks on a predefined list of queries."""
     configure_logging(console_output=False)
     with buildKustoClient() as client:
         properties = ClientRequestProperties()

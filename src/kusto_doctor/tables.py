@@ -1,4 +1,4 @@
-"""Table management functions"""
+"""Table management functions."""
 
 from azure.kusto.data import KustoClient
 
@@ -15,7 +15,17 @@ def create_table(
     table_name: str,
     schema: list[ColumnSchema],
 ):
-    """Creates a table in the specified database with the given schema."""
+    """Create a table in the specified database with the given schema.
+
+    Args:
+        client: KustoClient instance to execute the command.
+        database_name: Name of the Kusto database to create the table in.
+        table_name: Name of the table to create.
+        schema: List of ColumnSchema objects defining the table schema.
+
+    Raises:
+        ValueError: If the table name is invalid.
+    """
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
 
@@ -31,7 +41,16 @@ def create_table(
 def check_if_table_exists(
     client: KustoClient, database_name: str, table_name: str
 ) -> bool:
-    """Checks if a table exists in the specified database."""
+    """Check if a table exists in the specified database.
+
+    Args:
+        client: KustoClient instance to execute the command.
+        database_name: the name of the database to check.
+        table_name: the name of the table to check.
+
+    Returns:
+        bool: True if the table exists, False otherwise.
+    """
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
 
@@ -45,7 +64,16 @@ def check_if_table_exists(
 
 
 def clear_table(client: KustoClient, database_name: str, table_name: str):
-    """Clears all data from the specified table."""
+    """Clear all data from the specified table.
+
+    Args:
+        client: KustoClient instance to execute the command.
+        database_name: Name of the Kusto database containing the table.
+        table_name: Name of the table to clear.
+
+    Raises:
+        ValueError: If the table name is invalid.
+    """
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
 

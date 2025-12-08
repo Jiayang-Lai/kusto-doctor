@@ -13,10 +13,18 @@ logger = get_logger()
 def extract_queries_from_directory(
     detection_dir: str = None,
 ) -> List[Tuple[str, str]]:
-    """Retrieves all queries from <detection_dir>.
-    Returns a list of tuples, where the first element is the detection file name,
-    and the second element is the query text."""
+    """Retrieve all queries from <detection_dir>.
 
+    Returns a list of tuples, where the first element is the detection file name,
+    and the second element is the query text.
+
+    Args:
+        detection_dir: Optional; directory containing detection files.
+
+    Returns:
+        List of tuples, where the first element is the detection file name,
+        and the second element is the query text.
+    """
     queries = []
     if detection_dir:
         logger.info(f"Using provided detection directory: {detection_dir}")
@@ -60,10 +68,16 @@ def extract_queries_from_directory(
 def extract_queries_from_list(
     detection_list: List[Tuple[str, str]],
 ) -> List[Tuple[str, str]]:
-    """Retrieves all queries from a list of (detection_name, query_text) tuples.
-    Returns a list of tuples, where the first element is the query name,
-    and the second element is the query text."""
+    """Retrieve all queries from a list of (detection_name, query_text) tuples.
 
+    Args:
+        detection_list: List of tuples where each tuple contains
+            (detection_name, query_text).
+
+    Returns:
+        List of tuples, where the first element is the query name,
+        and the second element is the query text.
+    """
     queries = []
     if not detection_list:
         logger.warning("No detections provided.")

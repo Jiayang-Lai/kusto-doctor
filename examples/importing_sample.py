@@ -1,3 +1,4 @@
+"""Importing Sample Script."""
 import logging
 
 from kusto_doctor.models import ColumnSchema, KustoDataType
@@ -8,6 +9,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def create_test_table():
+    """Create a test table with a predefined schema."""
     with buildKustoClient() as client:
         test_schema = [
             ColumnSchema(ColumnName="QueryName", ColumnType=KustoDataType.string),

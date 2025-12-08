@@ -1,6 +1,4 @@
-"""
-This module contains custom exceptions for the Kusto-Analyzer package.
-"""
+"""This module contains custom exceptions for the Kusto-Analyzer package."""
 
 
 class KustoAnalyzerError(Exception):

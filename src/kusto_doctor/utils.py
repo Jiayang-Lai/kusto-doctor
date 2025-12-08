@@ -1,4 +1,4 @@
-"""Utility functions"""
+"""Utility functions."""
 
 import re
 from typing import List
@@ -16,10 +16,16 @@ def buildKustoClient(
     kcsb: KustoConnectionStringBuilder = None,
     backend_uri: str = DEFAULT_KUSTO_EMULATOR_URI,
 ) -> KustoClient:
-    """Builds and returns a KustoClient using the provided connection string builder
-    or a default one.
-    """
+    """Build a KustoClient using the provided connection string builder or default one.
 
+    Args:
+        kcsb: Optional; KustoConnectionStringBuilder instance.
+        backend_uri: Optional; URI for the Kusto backend
+            (default: DEFAULT_KUSTO_EMULATOR_URI).
+
+    Returns:
+        KustoClient: Configured Kusto client for executing queries.
+    """
     if kcsb is None:
         logger.info("Building Kusto client with default connection string.")
         kcsb = KustoConnectionStringBuilder.with_aad_application_token_authentication(
@@ -32,7 +38,12 @@ def buildKustoStreamingIngestClient(
     kcsb: KustoConnectionStringBuilder = None,
     backend_uri: str = DEFAULT_KUSTO_EMULATOR_URI,
 ) -> KustoStreamingIngestClient:
-    """Builds and returns a KustoStreamingIngestClient using environment variables.
+    """Build and return a KustoStreamingIngestClient using environment variables.
+
+    Args:
+        kcsb: Optional; KustoConnectionStringBuilder instance.
+        backend_uri: Optional; URI for the Kusto backend
+            (default: DEFAULT_KUSTO_EMULATOR_URI).
 
     Returns:
         KustoStreamingIngestClient: Configured streaming ingest client
@@ -50,7 +61,7 @@ def buildKustoStreamingIngestClient(
 
 
 def extract_nested_value(obj: dict, keys: List[str]) -> str | None:
-    """Extracts a nested value from a dictionary using a list of keys.
+    """Extract a nested value from a dictionary using a list of keys.
 
     Args:
         obj: The dictionary to extract the value from.
@@ -59,7 +70,6 @@ def extract_nested_value(obj: dict, keys: List[str]) -> str | None:
     Returns:
         The extracted value, or None if any key is not found.
     """
-
     try:
         for key in keys:
             obj = obj[key]
@@ -70,7 +80,7 @@ def extract_nested_value(obj: dict, keys: List[str]) -> str | None:
 
 
 def is_valid_kusto_table_name(table_name: str) -> bool:
-    """Validates if a table name conforms to Kusto entity naming rules.
+    """Validate if a table name conforms to Kusto entity naming rules.
 
     This function helps prevent KQL injection by ensuring table names follow
     the official Microsoft Kusto naming conventions.

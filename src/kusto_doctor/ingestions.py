@@ -23,10 +23,17 @@ def create_json_mapping(
     table_name: str,
     schema: list[ColumnSchema],
 ):
-    """Creates a JSON mapping for the specified table based on the provided schema.
+    """Create a JSON mapping for the specified table based on the provided schema.
+
     Note: This will overwrite any existing mapping named 'JsonMapping'.
     The function is very basic and assumes
     that the JSON structure directly maps to the table schema.
+
+    Args:
+        client: KustoClient instance to execute the query.
+        database_name: Name of the Kusto database.
+        table_name: Name of the Kusto table to create the mapping for.
+        schema: List of ColumnSchema objects defining the table schema.
     """
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
@@ -57,7 +64,16 @@ def _execute_batch_ingest(
     records: str,
     mapping_name: str,
 ):
-    """Private helper function to execute batch ingestion."""
+    """Private helper function to execute batch ingestion.
+
+    Args:
+        client: KustoClient instance to execute the query.
+        database_name: Name of the Kusto database.
+        table_name: Name of the Kusto table to ingest data into.
+        records: String containing the JSON records to ingest.
+        mapping_name: Name of the JSON mapping to use for ingestion.
+
+    """
     insert_cmd = (
         f".ingest inline into table {table_name} with "
         f"(format = 'json', ingestionMappingReference = '{mapping_name}') <|\n"
@@ -74,10 +90,21 @@ def ingest_data_inline(
     mapping_name: str = "JsonMapping",
     batch_size: int = 500,
 ):
-    """Ingests data into the specified table. Only JSON format is supported.
+    """Ingest data into the specified table. Only JSON format is supported.
+
+    Args:
+        client: KustoClient instance to execute the query.
+        database_name: Name of the Kusto database.
+        table_name: Name of the Kusto table to ingest data into.
+        data: List of dictionaries containing the data to ingest.
+        mapping_name: Name of the JSON mapping to use for ingestion.
+        batch_size: Number of records to ingest in each batch.
 
     Note: This method uses inline ingestion, which is suitable for small datasets.
     For larger datasets, consider using ingestion from storage.
+
+    Args:
+        client: KustoClient instance to execute the query.
     """
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
@@ -114,12 +141,21 @@ def ingest_data_inline_experimental(
     data: list[dict],
     mapping_name: str = "JsonMapping",
 ):
-    """Ingests data into the specified table. Only JSON format is supported.
+    """Ingest data into the specified table. Only JSON format is supported.
+
+    Args:
+        client: KustoClient instance to execute the query.
+        database_name: Name of the Kusto database.
+        table_name: Name of the Kusto table to ingest data into.
+        data: List of dictionaries containing the data to ingest.
+        mapping_name: Name of the JSON mapping to use for ingestion.
 
     Note: This method uses inline ingestion, which is suitable for small datasets.
     For larger datasets, consider using ingestion from storage.
-    """
 
+    Warning: This function is known to freeze the cluster randomly.
+    Use with caution and prefer using `ingest_data_inline` for production use.
+    """
     from azure.kusto.data import DataFormat
     from azure.kusto.ingest import (
         IngestionProperties,
@@ -172,13 +208,13 @@ def ingest_csv_data_from_storage(
     source: str,
     ignore_first_record: bool = True,
 ):
-    """Ingests data into the specified table from a storage source.
+    """Ingest data into the specified table from a storage source.
     The format must be CSV.
 
     Note: The file must be accessible by the Kusto cluster, e.g.,
     via a mounted volume or a public URL.
     If the first record is not a header, set ignore_first_record to False.
-    """
+    """  # noqa: D205
     if not is_valid_kusto_table_name(table_name):
         raise ValueError(f"Invalid Kusto table name: {table_name}")
 
@@ -199,8 +235,14 @@ def ingest_json_data_from_storage(
     source: str,
     mapping_name: str = "JsonMapping",
 ):
-    """Ingests data into the specified table from a storage source.
-    The format must be JSON.
+    """Ingests data into the specified table from a storage source in JSON format.
+
+    Args:
+        client: KustoClient instance to execute the query.
+        database_name: Name of the Kusto database.
+        table_name: Name of the Kusto table to ingest data into.
+        source: The storage source URL or path to the JSON file.
+        mapping_name: Name of the JSON mapping to use for ingestion.
 
     Note: The file must be accessible by the Kusto cluster, e.g.,
     via a mounted volume or a public URL.
@@ -218,7 +260,7 @@ def ingest_json_data_from_storage(
 
 
 def load_tables_from_directory(sample_data_dir: str = None, database_name: str = None):
-    """Loads sample data from a directory into the specified database.
+    """Load sample data from a directory into the specified database.
 
     The directory should have the following structure:
     sample_data_dir/
@@ -231,8 +273,11 @@ def load_tables_from_directory(sample_data_dir: str = None, database_name: str =
         Table3/
             from_storage  # A json file containing a list of URLs or paths to CSV files
             schema.json
-    """
 
+    Args:
+        sample_data_dir: Directory containing the sample data files.
+        database_name: Name of the Kusto database to load the data into.
+    """
     if sample_data_dir:
         logging.info(f"Using provided sample data directory: {sample_data_dir}")
     else:

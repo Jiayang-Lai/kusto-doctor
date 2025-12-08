@@ -1,7 +1,4 @@
-"""
-This module implements the Strategy pattern for loading Kusto tables
-from various sources.
-"""
+"""This module implements the Strategy pattern for loading Kusto tables from various sources."""  # noqa: E501
 
 import json
 from abc import ABC, abstractmethod
@@ -24,7 +21,7 @@ class TableSource(ABC):
         None,
         None,
     ]:
-        """Loads data from the source and returns it as a generator.
+        """Load data from the source and return it as a generator.
 
         Yields:
             A generator of tuples, each containing:
@@ -39,12 +36,20 @@ class DirectoryTableSource(TableSource):
     """Loads table data and schema from a directory with default folder structure."""
 
     def __init__(self, directory: Path):
+        """Initialize the DirectoryTableSource with a directory path."""
         if not isinstance(directory, Path):
             raise ValueError("directory must be a pathlib.Path object")
         self.directory = directory
 
     def load_schema(self, schema_file: Path) -> list[ColumnSchema]:
-        """Loads the schema from a JSON file."""
+        """Load the schema from a JSON file.
+
+        Args:
+            schema_file: Path to the schema JSON file.
+
+        Returns:
+            A list of ColumnSchema objects representing the table schema.
+        """
         if not schema_file.exists() or not schema_file.is_file():
             raise SourceLoadError(
                 f"Schema file {schema_file} does not exist or is not a file."
@@ -63,7 +68,14 @@ class DirectoryTableSource(TableSource):
         return schema
 
     def load_data(self, data_file: Path) -> list[dict]:
-        """Loads the table data from a JSON file."""
+        """Load the table data from a JSON file.
+
+        Args:
+            data_file: Path to the data JSON file.
+
+        Returns:
+            A list of dictionaries representing the table data.
+        """
         if not data_file.exists() or not data_file.is_file():
             raise SourceLoadError(
                 f"Data file {data_file} does not exist or is not a file."
@@ -77,7 +89,17 @@ class DirectoryTableSource(TableSource):
     def load_from_files(
         self, schema_file: Path, data_file: Path
     ) -> tuple[list[ColumnSchema], list[dict]]:
-        """Loads schema and data from specified files."""
+        """Load schema and data from specified files.
+
+        Args:
+            schema_file: Path to the schema JSON file.
+            data_file: Path to the data JSON file.
+
+        Returns:
+            A tuple containing:
+                - schema: List of ColumnSchema objects.
+                - data: List of dictionaries representing the table data.
+        """
         schema = self.load_schema(schema_file)
         data = self.load_data(data_file)
 
@@ -90,6 +112,15 @@ class DirectoryTableSource(TableSource):
         None,
         None,
     ]:
+        """Load table data and schema from the directory.
+
+        Yields:
+            A generator of tuples, each containing:
+            - table_name (str)
+            - schema (list of ColumnSchema)
+            - table_data (list of dicts (for inline) or str (for from_storage))
+            - load_type (IngestionMethod): how to ingest the data
+        """
         if not self.directory.exists() or not self.directory.is_dir():
             raise SourceLoadError(
                 f"Directory {self.directory} does not exist or is not a directory."
@@ -137,17 +168,26 @@ class QuerySource(ABC):
 
     @abstractmethod
     def load_queries(self) -> Generator[tuple[str, str], None, None]:
-        """Loads queries from the source.
+        """Load queries from the source.
 
-        Returns:
+        Yields:
             A generator that returns dictionary mapping query names to query strings.
         """
 
 
 class DirectoryQuerySource(QuerySource):
-    """Loads Kusto queries from a directory."""
+    """Load Kusto queries from a directory."""
 
     def __init__(self, directory: Path, navigator: list[str] = None):
+        """Initialize the DirectoryQuerySource with a directory path and navigator.
+
+        Args:
+            directory: Path to the directory containing query files.
+            navigator: Optional list of keys to navigate the query structure.
+
+        Raises:
+            SourceLoadError: If the directory does not exist or is not a directory.
+        """
         if not isinstance(directory, Path):
             raise ValueError("directory must be a pathlib.Path object")
         self.directory = directory
@@ -158,6 +198,16 @@ class DirectoryQuerySource(QuerySource):
             )
 
     def load_queries(self) -> Generator[tuple[str, str], None, None]:
+        """Load queries from JSON files in the directory.
+
+        Yields:
+            A generator that returns tuples of (query_name, query_text).
+            The query_text is extracted using the provided navigator.
+
+        Raises:
+            SourceLoadError: If the directory does not exist or is not a directory,
+            or if there is an error loading the queries.
+        """
         if not self.directory.exists() or not self.directory.is_dir():
             raise SourceLoadError(
                 f"Directory {self.directory} does not exist or is not a directory."

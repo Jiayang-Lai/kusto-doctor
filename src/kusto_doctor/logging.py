@@ -1,3 +1,5 @@
+"""Module for configuring and managing logging in the kusto_doctor package."""
+
 import logging
 import sys
 
@@ -9,6 +11,7 @@ class SingletonLogger:
     _logger = None
 
     def __new__(cls):
+        """Return the singleton instance of the logger."""
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
@@ -19,7 +22,7 @@ class SingletonLogger:
         level: str = "INFO",
         console_output: bool = False,
     ) -> logging.Logger:
-        """Gets or creates the singleton logger instance.
+        """Get or creates the singleton logger instance.
 
         Args:
             name: Logger name (typically __name__ or module name)
@@ -36,7 +39,13 @@ class SingletonLogger:
     def _setup_logger(
         self, name: str, level: str, console_output: bool
     ) -> logging.Logger:
-        """Internal method to set up the logger."""
+        """Set up the logger with the specified configuration.
+
+        Args:
+            name: Logger name
+            level: Logging level
+            console_output: Whether to output logs to console
+        """
         # Create logger
         logger = logging.getLogger(name)
 
@@ -106,7 +115,7 @@ def get_logger(
     level: str = "INFO",
     console_output: bool = False,
 ) -> logging.Logger:
-    """Gets the singleton logger instance.
+    """Get the singleton logger instance.
 
     Args:
         name: Logger name (typically __name__ or module name)

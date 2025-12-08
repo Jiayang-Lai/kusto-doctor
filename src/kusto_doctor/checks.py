@@ -21,12 +21,24 @@ def check_single_query(
     query_properties: ClientRequestProperties,
     database_name: str = DEFAULT_DATABASE_NAME,
 ) -> tuple[Optional[pandas.DataFrame], Optional[str]]:
-    """Checks a single query for syntax and execution errors.
+    """Check a single query for syntax and execution errors.
 
     Returns tuple of (a pandas DataFrame if successful,
     error message string if the query failed).
-    """
 
+    Args:
+        client: KustoClient instance to execute the query.
+        query_name: Name of the query for logging purposes.
+        query: The Kusto query to execute.
+        query_properties: ClientRequestProperties for the query.
+        database_name: Name of the Kusto database to run the query against.
+
+    Returns:
+        A tuple containing a pandas DataFrame with the query results if successful,
+        or an error message string if the query failed.
+        If the query fails, the DataFrame will be None
+        and the error message will contain the error details.
+    """
     try:
         response = client.execute(database_name, query, query_properties)
         logger.info(f"Query {query_name} ran successfully.")
@@ -46,13 +58,19 @@ def check_directory_queries(
     query_properties: ClientRequestProperties = None,
     database_name: str = DEFAULT_DATABASE_NAME,
 ) -> dict:
-    """Executes queries and produces human-readable results.
+    """Execute queries and produce human-readable results.
 
-    Returns a dictionary with query name as key
+    Return a dictionary with query name as key
     and query result or error message as value.
 
+    Args:
+        client: KustoClient instance to execute the queries.
+        detection_dir: Directory containing Kusto query files.
+        query_properties: ClientRequestProperties for the queries.
+        database_name: Name of the Kusto database to run the queries against.
 
-    The schema of the returned dictionary is as follows:
+    Returns:
+        A dictionary with the following structure:
 
     ```
     {
@@ -69,7 +87,6 @@ def check_directory_queries(
     }
     ```
     """
-
     queries = extract_queries_from_directory(detection_dir)
     results = {
         "success": {},
@@ -94,12 +111,19 @@ def check_list_queries(
     query_properties: ClientRequestProperties = None,
     database_name: str = DEFAULT_DATABASE_NAME,
 ) -> dict:
-    """Executes queries from a list and produces human-readable results.
+    """Execute queries from a list and produce human-readable results.
 
     Returns a dictionary with query name as key
     and query result or error message as value.
 
-    The schema of the returned dictionary is as follows:
+    Args:
+        client: KustoClient instance to execute the queries.
+        detection_list: List of tuples containing query names and query text.
+        query_properties: ClientRequestProperties for the queries.
+        database_name: Name of the Kusto database to run the queries against.
+
+    Returns:
+        A dictionary with the following structure:
 
     ```
     {
@@ -116,7 +140,6 @@ def check_list_queries(
     }
     ```
     """
-
     queries = extract_queries_from_list(detection_list)
     results = {
         "success": {},
