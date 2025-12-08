@@ -1,4 +1,5 @@
 """Unit tests for Kusto Doctor checks module."""
+
 import logging
 import pathlib
 from datetime import datetime

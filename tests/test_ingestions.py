@@ -1,4 +1,5 @@
 """Unit tests for Kusto Doctor ingestions module."""
+
 from unittest.mock import Mock
 
 import pytest

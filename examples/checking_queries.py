@@ -1,4 +1,5 @@
 """Checking Queries Example Script."""
+
 import logging
 import pathlib
 from datetime import datetime

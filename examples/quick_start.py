@@ -1,4 +1,5 @@
 """Quick Start Example for Kusto-Doctor."""
+
 import logging
 from datetime import datetime
 

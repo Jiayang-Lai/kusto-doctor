@@ -9,6 +9,7 @@ class KustoDataType(Enum):
 
     Reference: https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/scalar-data-types
     """
+
     bool = "bool"
     datetime = "datetime"
     decimal = "decimal"

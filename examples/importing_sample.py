@@ -1,4 +1,5 @@
 """Importing Sample Script."""
+
 import logging
 
 from kusto_doctor.models import ColumnSchema, KustoDataType
